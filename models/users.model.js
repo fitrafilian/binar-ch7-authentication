@@ -31,9 +31,15 @@ const getHashedPassword = (password) => {
   return hash;
 };
 
-const generateAuthToken = () => {
-  return crypto.randomBytes(30).toString("hex");
-};
+// const generateAuthToken = () => {
+//   return crypto.randomBytes(30).toString("hex");
+// };
+
+// JWT
+// var jwt = require("jsonwebtoken");
+// function generateAuthToken(user) {
+//   return jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+// }
 
 const { body, validationResult, check } = require("express-validator");
 const registerValidator = [
@@ -69,18 +75,18 @@ const getTime = function () {
   return timeNow;
 };
 
-const requireAuth = (req, res, next) => {
-  if (req.user) {
-    next();
-  } else {
-    res.render("login", {
-      layout: "layouts/main",
-      title: "Log In",
-      message: "Please login to continue",
-      messageClass: "alert-danger",
-    });
-  }
-};
+// const requireAuth = (req, res, next) => {
+//   if (req.user) {
+//     next();
+//   } else {
+//     res.render("login", {
+//       layout: "layouts/main",
+//       title: "Log In",
+//       message: "Please login to continue",
+//       messageClass: "alert-danger",
+//     });
+//   }
+// };
 
 const updateValidator = [
   // check("email", "Email is not valid").isEmail(),
@@ -105,7 +111,7 @@ const updateValidator = [
 
 // const profileValidator = [check("phone", "Phone number is not valid!").isMobilePhone("id-ID")];
 
-const profileValidator = []
+const profileValidator = [];
 //   body("phone").custom((value, { req }) => {
 //     if (value.length == 0) {
 //       return true;
@@ -119,7 +125,7 @@ const profileValidator = []
 
 const passwordValidator = [
   body("oldPassword").custom(async (value, { req }) => {
-    hashedOldPassword = getHashedPassword(value);
+    const hashedOldPassword = getHashedPassword(value);
     const duplicate = await User.findOne({ email: req.user.email });
     if (duplicate.password !== hashedOldPassword) {
       throw new Error("Password doesn't match!");
@@ -141,10 +147,9 @@ const passwordValidator = [
 module.exports = {
   User,
   getHashedPassword,
-  generateAuthToken,
   registerValidator,
   getTime,
-  requireAuth,
+  // requireAuth,
   updateValidator,
   profileValidator,
   passwordValidator,

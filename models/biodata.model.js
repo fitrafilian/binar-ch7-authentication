@@ -6,7 +6,7 @@ const Biodata = mongoose.model("biodata", {
     type: String,
     required: true,
   },
-  idUser: {
+  uid: {
     type: Schema.Types.ObjectId,
     required: true,
   },

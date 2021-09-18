@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="/css/main-page.css" />
 <link rel="stylesheet" type="text/css" href="/css/responsive.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <main>
   <!-- section-1 start -->
   <section id="section-1">
@@ -73,8 +74,81 @@
       <div class="wrapper">
         <h1>PLAY TRADITIONAL GAME</h1>
         <h2>Experience New Traditional Game Play</h2>
-        <a href="/games">PLAY NOW</a>
+        <a href="/" data-bs-toggle="modal" data-bs-target="#chooseMode">PLAY NOW</a>
       </div>
+
+      <div class="modal fade" id="chooseMode" aria-hidden="true" aria-labelledby="chooseModeToggleLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="chooseModeToggleLabel">Choose Mode</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <a href="/games" type="button" class="btn btn-primary">Single Mode</a>
+              <a href="" type="button" class="btn btn-primary" data-bs-target="#versusMode" data-bs-toggle="modal" data-bs-dismiss="modal">Versus Mode</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="versusMode" aria-hidden="true" aria-labelledby="versusModeToggleLabel2" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <a href="" type="button" class="btn btn-primary" data-bs-target="#chooseMode" data-bs-toggle="modal" data-bs-dismiss="modal">Back</a>
+              <h5 class="modal-title" id="versusModeToggleLabel2">Versus Mode</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="room" id="room" value="<%= room %>">
+              <a href="/games/waiting-room/<%= room %>" type="button" class="btn btn-primary">Create Room</a>
+              <a href="" type="button" class="btn btn-primary" data-bs-target="#roomCode" data-bs-toggle="modal" data-bs-dismiss="modal">Join Room</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="roomCode" aria-hidden="true" aria-labelledby="roomCodeToggleLabel3" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <a href="" type="button" class="btn btn-primary" data-bs-target="#versusMode" data-bs-toggle="modal" data-bs-dismiss="modal">Back</a>
+              <h5 class="modal-title" id="roomCodeToggleLabel2">Join Friend</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/games/join" method="POST">
+                Input your room code
+                <input type="text" name="roomNumber" id="roomNumber">
+                <button type="submit" class="btn btn-primary">Join</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Online Users -->
+      <% if (typeof user != 'undefined') { %>
+        <div class="online-box">
+          <p>
+            <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+              Online Friends
+            </button>
+          </p>
+          <div style="">
+            <div class="collapse collapse-horizontal" id="collapseWidthExample">
+              <div class="card card-body" style="width: 300px;">
+                <div class="header-online d-flex align-items-center ">
+                  <div class="rounded me-2 "></div>
+                  <h5 class="mb-1">Online</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
 
       <!-- tombol story di bawah -->
       <div class="story-text">

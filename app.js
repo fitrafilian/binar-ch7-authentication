@@ -1,6 +1,7 @@
 // Core module
 const express = require("express");
 const app = express();
+require("dotenv").config();
 
 // Third-party module
 const expressLayouts = require("express-ejs-layouts");
@@ -54,6 +55,9 @@ app.use("/user", usersRouter);
 const dashboardRouter = require("./routes/dashboard.router");
 app.use("/dashboard", dashboardRouter);
 
+const gamesRouter = require("./routes/games.routes");
+app.use("/games", gamesRouter);
+
 // To handle user error
 app.get("*", (req, res) => {
   res.render("404", {
@@ -62,7 +66,7 @@ app.get("*", (req, res) => {
   });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Listening from port ${PORT}`);
 });

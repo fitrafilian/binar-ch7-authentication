@@ -53,6 +53,17 @@
               href="/dashboard/users"
               >Users Master</a
             >
+            <a
+              class="
+                list-group-item list-group-item-action list-group-item-light
+                p-3
+                <% if (typeof activeOnline != 'undefined') { %>
+                  <%- activeOnline %> 
+                 <% } %>
+              "
+              href="/dashboard/activity"
+              >Users Login Activity</a
+            >
           </div>
         </div>
         <!-- Page content wrapper-->

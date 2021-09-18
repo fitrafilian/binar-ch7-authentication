@@ -1,0 +1,130 @@
+<base href="/">
+<link rel="stylesheet" href="css/games.css" />
+<main>
+  <div class="nav">
+    <div class="container wrapper">
+      <div
+        class="back-wrapper d-flex justify-content-center align-items-center"
+      >
+      <form action="/games/history" method="post">
+        <input type="hidden" name="playerScore" id="playerScore" value="">
+        <input type="hidden" name="computerScore" id="computerScore" value="">
+        <input type="hidden" name="result" id="result" value="">
+        <button type="submit" style="background-color: transparent; border: transparent;"><img src="img-suwit-jawa/back.png" alt="Back" class="back"
+          /></button>
+        <!-- <a href="/" id="back"
+          ></a> -->
+      </form>
+      </div>
+      <img src="img-suwit-jawa/logo 1.png" alt="Logo" class="logo" />
+      <span>ROCK PAPER SCISSOR</span>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal show" id="staticBackdrop" data-bs-backdrop="focus" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title" id="staticBackdropLabel">Room No. <%= room %> </h5>
+            <h5 class="modal-title" id="staticBackdropLabel">Waiting for opponent...</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <% if (typeof message != 'undefined') { %>
+            <div class="alert <%= messageClass %>" role="alert"><%= message %></div>
+            <% } %>
+          <a href="/games/versus/<%= room %>" class="btn btn-primary">Start</a>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="main-wrapper">
+    <div class="main">
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="wrap-score d-flex justify-content-center align-items-center" style="">
+            <span class="player-score d-inline-block">0</span>
+          </div>
+          <div class="col col-sm-3 col-md-3 col-lg-3 flex-column justify-content-center" id="player" align="center">
+            <p class="text-center">player</p>
+            <div>
+              <button class="box box-rock">
+                <img src="img-suwit-jawa/rock.png" alt="rock" class="rock" />
+              </button>
+            </div>
+            <div>
+              <button class="box box-paper">
+                <img src="img-suwit-jawa/paper.png" alt="paper" class="paper" />
+              </button>
+            </div>
+            <div>
+              <button class="box box-scissor">
+                <img src="img-suwit-jawa/scissor.png" alt="scissor" class="scissor" />
+              </button>
+            </div>
+          </div>
+          <div class="col col-sm-5 col-md-3 col-lg-3" align="center">
+            <div class="panel">vs</div>
+          </div>
+          <div
+            class="col col-sm-3 col-md-3 col-lg-3 flex-column justify-content-center computer"
+            id="computer"
+            align="center"
+          >
+            <p class="text-center">computer</p>
+            <div class="box box-rock">
+              <img src="img-suwit-jawa/rock.png" alt="rock" class="rock" />
+            </div>
+            <div class="box box-paper">
+              <img src="img-suwit-jawa/paper.png" alt="paper" class="paper" />
+            </div>
+            <div class="box box-scissor">
+              <img src="img-suwit-jawa/scissor.png" alt="scissor" class="scissor" />
+            </div>
+          </div>
+          <div class="wrap-score d-flex justify-content-center align-items-center" style="">
+            <span class="computer-score d-inline-block">0</span>
+          </div>
+        </div>
+        <footer class="d-flex justify-content-center align-items-center m-auto">
+          <div
+            class="wrap-score-mini left d-flex justify-content-center align-items-center""
+          >
+            <div class="player-score d-flex justify-content-center align-items-center d-block">0</div>
+          </div>
+          <div class="row justify-content-center refresh">
+            <img src="img-suwit-jawa/refresh.png" alt="Refresh" />
+          </div>
+          <div
+            class="wrap-score-mini right d-flex justify-content-center align-items-center""
+          >
+            <div class="computer-score d-flex justify-content-center align-items-center d-block">0</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- <div class="refresh">
+      <div class="container">
+        <div class="row justify-content-center">
+          <img src="img-suwit-jawa/refresh.png" alt="Refresh" />
+        </div>
+      </div>
+    </div> -->
+  </div>
+  
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="js/games.js"></script>
+<script>
+  $(window).load(function()
+{
+    $('.modal').modal('show');
+});
+</script>

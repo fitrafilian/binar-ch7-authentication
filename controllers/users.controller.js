@@ -3,8 +3,8 @@ const biodataModel = require("../models/biodata.model");
 const historyModel = require("../models/history.model");
 const { body, validationResult, check } = require("express-validator");
 const mongoose = require("mongoose");
-
-let dataTokens = {};
+const jwt = require("jsonwebtoken");
+const loginActivityModel = require("../models/login.model");
 
 module.exports = {
   register: (req, res) => {
@@ -56,6 +56,13 @@ module.exports = {
       password: hashedPassword,
     });
 
+    userdata = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+    };
+
     let emailAdmin = "";
     if (email == "admin@admin.com") {
       emailAdmin = email;
@@ -66,34 +73,49 @@ module.exports = {
       password: hashedPassword,
     });
 
-    if (admin) {
-      const authToken = usersModel.generateAuthToken();
+    if (admin || user) {
       const time = usersModel.getTime();
       user.time = time;
 
-      // Store authentication token
-      dataTokens[authToken] = user;
-
-      // Setting the auth token in cookies
-      res.cookie("AuthToken", authToken, {
-        expires: new Date(Date.now() + 900000),
-      });
-      res.redirect("/dashboard");
-    } else if (user) {
-      const authToken = usersModel.generateAuthToken();
-      const time = usersModel.getTime();
-      user.time = time;
-
-      // Store authentication token
-      dataTokens[authToken] = user;
-
-      // Setting the auth token in cookies
-      res.cookie("AuthToken", authToken, {
-        expires: new Date(Date.now() + 900000),
+      let Token = loginActivityModel.JWTCreate({
+        date: time,
+        uid: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
       });
 
-      // Redirect user to the user page
-      res.redirect("/");
+      userdata = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        token_type: "Bearer",
+        token: Token,
+      };
+
+      await loginActivityModel.LoginActivity.insertMany({
+        date: time,
+        uid: user._id,
+        userdata: userdata,
+      });
+
+      // Store authentication token
+      // dataTokens[authToken] = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
+      // const authToken = usersModel.generateAuthToken(user);
+      // dataTokens[authToken] = user;
+
+      // Setting the auth token in cookies
+      res.cookie("AuthToken", Token, {
+        expires: new Date(Date.now() + 900000),
+      });
+
+      if (admin) {
+        res.redirect("/dashboard");
+      } else {
+        res.redirect("/");
+      }
     } else {
       res.render("login", {
         layout: "layouts/main",
@@ -139,24 +161,27 @@ module.exports = {
     }
   },
 
-  auth: (req, res, next) => {
-    // Get auth token from the cookies
-    const authToken = req.cookies["AuthToken"];
+  // auth: (req, res, next) => {
+  //   // Get auth token from the cookies
+  //   const authToken = req.cookies["AuthToken"];
 
-    // Inject the user to the request
-    req.user = dataTokens[authToken];
+  //   // Inject the user to the request
+  //   req.user = dataTokens[authToken];
 
-    next();
-  },
+  //   next();
+  // },
 
   profile: async (req, res) => {
-    let biodata = await biodataModel.Biodata.findOne({ idUser: req.user._id });
-    let histories = await historyModel.History.find({ idUser: req.user._id });
+    const authToken = req.cookies["AuthToken"];
+    const userdata = loginActivityModel.getUserData(authToken);
+    let user = await usersModel.User.findOne({ _id: userdata.uid });
+    let biodata = await biodataModel.Biodata.findOne({ uid: userdata.uid });
+    let histories = await historyModel.History.find({ uid: userdata.uid });
     if (biodata) {
       res.render("profile", {
         layout: "layouts/main",
         title: "Profile",
-        user: req.user,
+        user: user,
         biodata: biodata,
         histories: histories,
       });
@@ -167,7 +192,7 @@ module.exports = {
       res.render("profile", {
         layout: "layouts/main",
         title: "Profile",
-        user: req.user,
+        user: user,
         biodata: biodata,
         histories: histories,
       });
@@ -175,9 +200,11 @@ module.exports = {
   },
 
   updateProfile: async (req, res) => {
+    const authToken = req.cookies["AuthToken"];
+    const userdata = loginActivityModel.getUserData(authToken);
     const errors = validationResult(req);
     const { email, firstName, lastName, phone } = req.body;
-    const dataUser = await usersModel.User.findOne({ _id: req.user._id });
+    const dataUser = await usersModel.User.findOne({ _id: userdata.uid });
     const user = req.user;
     if (!errors.isEmpty()) {
       res.render("profile", {
@@ -187,9 +214,10 @@ module.exports = {
         user: user,
         dataUser: dataUser,
       });
+      console.log("error");
     } else {
       await usersModel.User.updateOne(
-        { _id: req.user._id },
+        { _id: userdata.uid },
         {
           $set: {
             firstName: firstName,
@@ -207,11 +235,15 @@ module.exports = {
   },
 
   updatePassword: async (req, res) => {
+    const authToken = req.cookies["AuthToken"];
+    const userdata = loginActivityModel.getUserData(authToken);
     const errors = validationResult(req);
     const { oldPassword, password, confirmPassword } = req.body;
     const hashedPassword = await usersModel.getHashedPassword(password);
-    const dataUser = await usersModel.User.findOne({ _id: req.user._id });
-    const user = req.user;
+    const dataUser = await usersModel.User.findOne({ _id: userdata.uid });
+    const user = await usersModel.User.findOne({ _id: userdata.uid });
+    let biodata = await biodataModel.Biodata.findOne({ uid: userdata.uid });
+    let histories = await historyModel.History.find({ uid: userdata.uid });
     if (!errors.isEmpty()) {
       res.render("profile", {
         layout: "layouts/main",
@@ -219,10 +251,13 @@ module.exports = {
         errors: errors.array(),
         user: user,
         dataUser: dataUser,
+        biodata: biodata,
+        histories: histories,
       });
+      console.log("gagal");
     } else {
       await usersModel.User.updateOne(
-        { _id: req.user._id },
+        { _id: userdata.uid },
         {
           $set: {
             password: hashedPassword,
@@ -231,16 +266,19 @@ module.exports = {
       ).then(() => {
         res.redirect("/user/profile");
       });
+      console.log("sukses");
     }
   },
 
   biodataUpdate: async (req, res) => {
+    const authToken = req.cookies["AuthToken"];
+    const userdata = loginActivityModel.getUserData(authToken);
     const { biodata } = req.body;
-    const user = req.user;
-    const userBio = await biodataModel.Biodata.findOne({ idUser: mongoose.Types.ObjectId(req.user._id) });
+    // const user = req.user;
+    const userBio = await biodataModel.Biodata.findOne({ uid: mongoose.Types.ObjectId(userdata.uid) });
     if (userBio) {
       await biodataModel.Biodata.updateOne(
-        { idUser: mongoose.Types.ObjectId(req.user._id) },
+        { uid: mongoose.Types.ObjectId(userdata.uid) },
         {
           $set: {
             biodata: biodata,
@@ -252,38 +290,46 @@ module.exports = {
     } else {
       await biodataModel.Biodata.insertMany({
         biodata: biodata,
-        idUser: mongoose.Types.ObjectId(req.user._id),
+        uid: mongoose.Types.ObjectId(userdata.uid),
       }).then(() => {
         res.redirect("/user/profile");
       });
     }
   },
 
-  history: async (req, res) => {
-    const { playerScore, computerScore, result } = req.body;
-    if (result.length > 0) {
-      const time = usersModel.getTime();
-      req.body.time = time;
-      await historyModel.History.insertMany({
-        date: req.body.time,
-        player: playerScore,
-        computer: computerScore,
-        result: result,
-        idUser: mongoose.Types.ObjectId(req.user._id),
-      }).then(() => {
-        res.redirect("/");
-      });
-    } else {
-      res.redirect("/");
-    }
-  },
+  // history: async (req, res) => {
+  //   const { playerScore, computerScore, result } = req.body;
+  //   if (result.length > 0) {
+  //     const time = usersModel.getTime();
+  //     req.body.time = time;
+  //     await historyModel.History.insertMany({
+  //       date: req.body.time,
+  //       player: playerScore,
+  //       computer: computerScore,
+  //       result: result,
+  //       uid: mongoose.Types.ObjectId(req.user._id),
+  //     }).then(() => {
+  //       res.redirect("/");
+  //     });
+  //   } else {
+  //     res.redirect("/");
+  //   }
+  // },
 
-  logout: (req, res) => {
-    const token = req.token;
-    delete dataTokens[token];
+  logout: async (req, res) => {
+    await loginActivityModel.LoginActivity.deleteOne({ _id: mongoose.Types.ObjectId(req.user._id) });
     res.clearCookie("AuthToken");
     res.redirect("/");
   },
 
-  dataTokens,
+  userActivity: async (req, res) => {
+    loginActivityModel.LoginActivity.find()
+      .select(["userdata.firstName", "userdata.lastName", "userdata.email"])
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
 };

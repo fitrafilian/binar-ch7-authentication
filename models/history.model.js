@@ -19,7 +19,7 @@ const History = mongoose.model("history", {
     required: true,
   },
 
-  idUser: {
+  uid: {
     type: Schema.Types.ObjectId,
     required: true,
   },

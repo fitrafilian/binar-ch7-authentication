@@ -124,6 +124,19 @@ main{
 		transform: translateX(-50%);
 	}
 
+	.banner .online-box {
+		position: absolute;
+		left: 20px;
+		bottom: 20px;
+	}
+
+	.online-box .rounded {
+		width: 10px;
+		height: 10px;
+		background-color: green;
+		border-radius: 200px;
+	}
+
 /*end of section-1*/
 
 

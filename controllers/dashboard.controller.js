@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const usersModel = require("../models/users.model");
 const biodataModel = require("../models/biodata.model");
 const historyModel = require("../models/history.model");
+const loginActivityModel = require("../models/login.model");
 const usersController = require("../controllers/users.controller");
 const { body, validationResult, check } = require("express-validator");
 let dataTokens = usersController.dataTokens;
@@ -26,13 +27,23 @@ module.exports = {
     });
   },
 
+  loginActivity: async (req, res) => {
+    let online = await loginActivityModel.LoginActivity.find();
+    res.render("dashboard/online", {
+      title: "Users Master",
+      layout: "dashboard/layouts/dashboard-layout",
+      users: online,
+      activeOnline: "linkActive",
+    });
+  },
+
   details: async (req, res) => {
     let user = await usersModel.User.findOne({
       _id: mongoose.Types.ObjectId(req.params._id),
       // _id: req.params._id,
     });
-    let biodata = await biodataModel.Biodata.findOne({ idUser: req.params._id });
-    let histories = await historyModel.History.find({ idUser: req.params._id });
+    let biodata = await biodataModel.Biodata.findOne({ uid: req.params._id });
+    let histories = await historyModel.History.find({ uid: req.params._id });
     res.render("dashboard/details", {
       layout: "dashboard/layouts/dashboard-layout",
       title: user.firstName + " " + user.lastName,

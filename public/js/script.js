@@ -8,6 +8,58 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
+let settings = {
+  url: "/user/activity",
+  method: "GET",
+  timeout: 0,
+};
+
+// $.ajax(settings).done(function (response) {
+//   console.log(response);
+//   $(".online-box .list-group").html("");
+//   for (let i = 0; i < response.length; i++) {
+//     $(".online-box .list-group").append(`
+//            <li class="list-group-item">
+//             <div class="container">
+//               <div class="row">
+//                 <div class="col-3">
+//                   <img style="width: 40px; height: 40px;" src="image/profile.svg" alt="">
+//                 </div>
+//                 <div class="col">
+//                   <h5 class="mb-0">${response[i].userdata.firstName} ${response[i].userdata.lastName}</h5>
+//                   <p class="mb-0">${response[i].userdata.email}</p>
+//                 </div>
+//               </div>
+//             </div>
+//           </li>
+//              `);
+//   }
+// });
+
+fetch(settings.url)
+  .then((response) => response.json())
+  .then((response) => {
+    const list = document.querySelector(".online-box .list-group");
+
+    for (let i = 0; i < response.length; i++) {
+      list.innerHTML += `      
+        <li class="list-group-item">
+          <div class="container">
+            <div class="row">
+              <div class="col-3">
+                <img style="width: 40px; height: 40px;" src="image/profile.svg" alt="">
+              </div>
+              <div class="col">
+                <h5 class="mb-0">${response[i].userdata.firstName} ${response[i].userdata.lastName}</h5>
+                <p class="mb-0">${response[i].userdata.email}</p>
+              </div>
+            </div>
+          </div>
+        </li>
+        `;
+    }
+  });
+
 // const cookieNow = document.cookie;
 // console.log(cookieNow);
 
