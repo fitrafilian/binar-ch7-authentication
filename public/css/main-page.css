@@ -137,6 +137,21 @@ main{
 		border-radius: 200px;
 	}
 
+	.modal-content {
+		border-radius: 15px !important;
+	}
+
+	.single-mode, .versus-mode {
+		background-color: #FFB548;
+		color: black;
+		border: none;
+	}
+
+	.single-mode:hover, .versus-mode:hover {
+		background-color: #FFB548;
+		color: black;
+	}
+
 /*end of section-1*/
 
 

@@ -62,35 +62,73 @@
     <div class="card my-2">
       <div class="card-body">
         <h3>User's History</h3>
-        <div class="container">
-          <div class="row d-flex mb-3">
-            <div class="d-flex flex-column" style="width: auto">
-              <% if (histories.length == 0) { %>
-                <h5 style="color: red;">This user hasn't play any game yet</h5>
-              <% } else { %>
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th scope="col">No.</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Player's Score</th>
-                      <th scope="col">Computer's Score</th>
-                      <th scope="col">Win/Lose</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% histories.forEach((history, i) => { i++ %>
-                    <tr>
-                      <th scope="row"><%= i++ %></th>
-                      <td><%= history.date %></td>
-                      <td><%= history.player %></td>
-                      <td><%= history.computer %></td>
-                      <td><%= history.result %></td>
-                    </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
-              <% } %> 
+        <div class="single-mode">
+          <h6 class="fw-bold" style="background-color: yellow;">Single Mode</h6>
+          <div class="container">
+            <div class="row d-flex mb-3">
+              <div class="d-flex flex-column" style="width: auto">
+                <% if (histories.length == 0) { %>
+                  <h5 style="color: red;">This user hasn't play any game yet</h5>
+                <% } else { %>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player's Score</th>
+                        <th scope="col">Computer's Score</th>
+                        <th scope="col">Win/Lose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% histories.forEach((history, i) => { i++ %>
+                      <tr>
+                        <th scope="row"><%= i++ %></th>
+                        <td><%= history.date %></td>
+                        <td><%= history.player %></td>
+                        <td><%= history.computer %></td>
+                        <td><%= history.result %></td>
+                      </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } %> 
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="versus-mode">
+          <h6 class="fw-bold" style="background-color: yellow;">Versus Mode</h6>
+          <div class="container">
+            <div class="row d-flex mb-3">
+              <div class="d-flex flex-column" style="width: auto">
+                <% if (versus.length == 0) { %>
+                  <h5 style="color: red;">This user hasn't play any game yet</h5>
+                <% } else { %>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player's Score</th>
+                        <th scope="col">Computer's Score</th>
+                        <th scope="col">Win/Lose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% versus.forEach((v, i) => { i++ %>
+                      <tr>
+                        <th scope="row"><%= i++ %></th>
+                        <td><%= v.date %></td>
+                        <td><%= v.player %></td>
+                        <td><%= v.enemy %></td>
+                        <td><%= v.result %></td>
+                      </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } %> 
+              </div>
             </div>
           </div>
         </div>

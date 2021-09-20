@@ -142,36 +142,81 @@
             </div>
           </div>
         </section>
+        
         <section class="history">
           <h5>Profile History</h5>
-          <div class="row">
-            <div class="col">
-              <% if (histories.length > 0) { %>
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th scope="col">No.</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Player's Score</th>
-                      <th scope="col">Computer's Score</th>
-                      <th scope="col">Win/Lose</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% histories.forEach((history, i) => { i++ %>
-                    <tr>
-                      <th scope="row"><%= i++ %></th>
-                      <td><%= history.date %></td>
-                      <td><%= history.player %></td>
-                      <td><%= history.computer %></td>
-                      <td><%= history.result %></td>
-                    </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
-              <% } else { %>
-                <h5 style="color: red;">You haven't play any game yet</h5>
-                <% } %> 
+          <div class="container history-nav p-0 mt-3">
+            <div class="row">
+              <div class="col-6">
+                <div class="single-button mode-button active-history text-center py-3">Single Mode</div>
+              </div>
+              <div class="col-6">
+                <div class="versus-button mode-button text-center py-3">Versus Mode</div>
+              </div>
+            </div>
+          </div>
+          <div class="single-mode">
+            <div class="row">
+              <div class="col">
+                <% if (histories.length > 0) { %>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player's Score</th>
+                        <th scope="col">Computer's Score</th>
+                        <th scope="col">Win/Lose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% histories.forEach((history, i) => { i++ %>
+                      <tr>
+                        <th scope="row"><%= i++ %></th>
+                        <td><%= history.date %></td>
+                        <td><%= history.player %></td>
+                        <td><%= history.computer %></td>
+                        <td><%= history.result %></td>
+                      </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                  <h5 style="color: red;">You haven't play any game yet</h5>
+                  <% } %> 
+              </div>
+            </div>
+          </div>
+          <div class="versus-mode hidden">
+            <div class="row">
+              <div class="col">
+                <% if (versus.length > 0) { %>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player's Score</th>
+                        <th scope="col">Enemy's Score</th>
+                        <th scope="col">Win/Lose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% versus.forEach((v, i) => { i++ %>
+                      <tr>
+                        <th scope="row"><%= i++ %></th>
+                        <td><%= v.date %></td>
+                        <td><%= v.player %></td>
+                        <td><%= v.enemy %></td>
+                        <td><%= v.result %></td>
+                      </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                  <h5 style="color: red;">You haven't play any game yet</h5>
+                  <% } %> 
+              </div>
             </div>
           </div>
         </section>
@@ -179,3 +224,23 @@
     </div>
   </div>
 </main>
+
+<script>
+  const singleButton = document.querySelector('.single-button')
+  const versusButton = document.querySelector('.versus-button')
+  const singleMode = document.querySelector('.single-mode')
+  const versusMode = document.querySelector('.versus-mode')
+
+singleButton.addEventListener('click', (e)=> {
+  versusButton.classList.remove('active-history')
+  singleMode.classList.remove('hidden')
+  singleButton.classList.add('active-history')
+  versusMode.classList.add('hidden')
+})
+versusButton.addEventListener('click', (e)=> {
+  singleButton.classList.remove('active-history')
+  versusMode.classList.remove('hidden')
+  versusButton.classList.add('active-history')
+  singleMode.classList.add('hidden')
+})
+</script>

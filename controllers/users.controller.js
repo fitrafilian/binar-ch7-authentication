@@ -1,6 +1,7 @@
 const usersModel = require("../models/users.model");
 const biodataModel = require("../models/biodata.model");
 const historyModel = require("../models/history.model");
+const versusModel = require("../models/versus.model");
 const { body, validationResult, check } = require("express-validator");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
@@ -177,6 +178,45 @@ module.exports = {
     let user = await usersModel.User.findOne({ _id: userdata.uid });
     let biodata = await biodataModel.Biodata.findOne({ uid: userdata.uid });
     let histories = await historyModel.History.find({ uid: userdata.uid });
+    let versusHistories1 = await versusModel.Versus.find({ playerOne: userdata.uid });
+    let versusHistories2 = await versusModel.Versus.find({ playerTwo: userdata.uid });
+    let Versus = [];
+    versusHistories1.forEach((v) => {
+      if (v.playerOne && v.playerTwo && v.playerOneScore !== undefined && v.playerTwoScore !== undefined) {
+        let result;
+        if (v.playerOneScore > v.playerTwoScore) {
+          result = "Win";
+        } else if (v.playerOneScore < v.playerTwoScore) {
+          result = "Lose";
+        } else {
+          result = "Draw";
+        }
+        Versus.push({
+          date: v.date,
+          player: v.playerOneScore,
+          enemy: v.playerTwoScore,
+          result: result,
+        });
+      }
+    });
+    versusHistories2.forEach((v) => {
+      if (v.playerOne && v.playerTwo && v.playerOneScore !== undefined && v.playerTwoScore !== undefined) {
+        let result;
+        if (v.playerOneScore < v.playerTwoScore) {
+          result = "Win";
+        } else if (v.playerOneScore > v.playerTwoScore) {
+          result = "Lose";
+        } else {
+          result = "Draw";
+        }
+        Versus.push({
+          date: v.date,
+          player: v.playerTwoScore,
+          enemy: v.playerOneScore,
+          result: result,
+        });
+      }
+    });
     if (biodata) {
       res.render("profile", {
         layout: "layouts/main",
@@ -184,6 +224,7 @@ module.exports = {
         user: user,
         biodata: biodata,
         histories: histories,
+        versus: Versus,
       });
     } else {
       biodata = {
@@ -195,6 +236,7 @@ module.exports = {
         user: user,
         biodata: biodata,
         histories: histories,
+        versus: Versus,
       });
     }
   },

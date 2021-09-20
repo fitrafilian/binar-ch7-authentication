@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 
+// const server = http.createServer(app);
+
 // Third-party module
 const expressLayouts = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
@@ -16,6 +18,7 @@ app.use(cors());
 
 // To support URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // To parse cookies from the HTTP Request
 app.use(cookieParser());
@@ -67,6 +70,12 @@ app.get("*", (req, res) => {
 });
 
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+
+const http = require("http");
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
   console.log(`Listening from port ${PORT}`);
 });
+
+module.exports = server;
